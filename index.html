@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Study Desk – Clock & Timer</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Hind+Siliguri:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#f4f1ec;--soft:rgba(244,241,236,.68);--glass:rgba(10,14,20,.38);--line:rgba(244,241,236,.22);--accent:#9fd8b0;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--glass:rgba(5,8,12,.5)}}
+:root[data-theme="dark"]{--glass:rgba(5,8,12,.5)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:#16251d;color:var(--ink);font-family:'Hind Siliguri',system-ui,sans-serif;transition:background .6s}
+.bg{position:fixed;inset:0;z-index:-1;transition:background 1s}
+.bg::after{content:"";position:absolute;inset:0;pointer-events:none}
+body.forest{--accent:#9fd8b0}
+body.forest .bg{background:radial-gradient(120% 80% at 80% 0%,#3d6b4f 0,transparent 60%),linear-gradient(170deg,#1b3a2b,#0f1f17)}
+body.night{--accent:#b9b4ff}
+body.night .bg{background:radial-gradient(1.5px 1.5px at 20% 30%,#fff,transparent),radial-gradient(1px 1px at 70% 20%,#fff,transparent),radial-gradient(1.5px 1.5px at 85% 60%,#fff,transparent),radial-gradient(1px 1px at 40% 75%,#fff,transparent),radial-gradient(1px 1px at 10% 85%,#fff,transparent),linear-gradient(180deg,#171a3a,#0b0d22)}
+body.rain{--accent:#8fc7e8}
+body.rain .bg{background:linear-gradient(180deg,#34455a,#1b2633)}
+body.rain .bg::after{background:repeating-linear-gradient(105deg,transparent 0 22px,rgba(190,220,245,.16) 22px 23px);background-size:160px 160px;animation:fall .7s linear infinite}
+@keyframes fall{to{background-position:-60px 160px}}
+body.sunrise{--accent:#ffcf9f}
+body.sunrise .bg{background:radial-gradient(90% 60% at 50% 100%,#ffb27a 0,transparent 70%),linear-gradient(180deg,#5b4a7a,#c58a8a)}
+main{max-width:560px;margin:0 auto;padding:22px 18px 40px}
+.clock{text-align:center;margin-bottom:18px}
+.clock b{display:block;font:600 clamp(2rem,9vw,2.8rem)/1 'Fraunces',serif;font-variant-numeric:tabular-nums}
+.clock span{color:var(--soft);font-size:.95rem}
+.tabs{display:flex;gap:6px;background:var(--glass);padding:5px;border-radius:999px;backdrop-filter:blur(10px)}
+.tabs button{flex:1;border:0;background:none;color:var(--soft);font:inherit;padding:9px 6px;border-radius:999px;cursor:pointer}
+.tabs button[aria-selected=true]{background:var(--ink);color:#14201a;font-weight:600}
+.card{margin-top:16px;background:var(--glass);backdrop-filter:blur(12px);border:1px solid var(--line);border-radius:28px;padding:26px 18px;text-align:center}
+.ring{position:relative;width:min(72vw,280px);aspect-ratio:1;margin:0 auto 14px}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:7}
+.ring .tr{stroke:var(--line)}
+.ring .pr{stroke:var(--accent);stroke-linecap:round;transition:stroke-dashoffset .4s linear}
+.read{position:absolute;inset:0;display:grid;place-content:center}
+.read b{font:400 clamp(2.4rem,13vw,3.6rem)/1 'Fraunces',serif;font-variant-numeric:tabular-nums}
+.read span{color:var(--soft);margin-top:6px}
+.row{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:10px}
+.btn{border:1px solid var(--line);background:transparent;color:var(--ink);font:inherit;padding:10px 20px;border-radius:999px;cursor:pointer}
+.btn.main{background:var(--accent);color:#13201a;border-color:transparent;font-weight:600;min-width:120px}
+.btn:focus-visible,.tabs button:focus-visible,.sw:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.set{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:16px;color:var(--soft);font-size:.9rem}
+.set label{display:grid;gap:4px;justify-items:center}
+input[type=number],select{width:76px;padding:7px;border-radius:10px;border:1px solid var(--line);background:rgba(0,0,0,.25);color:var(--ink);font:inherit;text-align:center}
+select{width:auto}
+.laps{list-style:none;margin:12px 0 0;padding:0;max-height:110px;overflow:auto;color:var(--soft);font-variant-numeric:tabular-nums}
+.panel{margin-top:16px;background:var(--glass);backdrop-filter:blur(12px);border:1px solid var(--line);border-radius:22px;padding:16px}
+.panel h2{margin:0 0 10px;font:600 1rem 'Hind Siliguri',sans-serif}
+.sws{display:flex;gap:10px;flex-wrap:wrap}
+.sw{border:1px solid var(--line);background:rgba(0,0,0,.2);color:var(--ink);font:inherit;padding:8px 14px;border-radius:14px;cursor:pointer}
+.sw[aria-pressed=true]{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.snd{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:14px;color:var(--soft)}
+input[type=range]{accent-color:var(--accent);flex:1;min-width:120px}
+.cnt{color:var(--soft);margin-top:8px;font-size:.9rem}
+@media (prefers-reduced-motion:reduce){body.rain .bg::after{animation:none}.ring .pr{transition:none}}
+</style>
+</head>
+<body class="forest">
+<div class="bg"></div>
+<main>
+  <div class="clock"><b id="now">--:--:--</b><span id="date"></span></div>
+
+  <div class="tabs" role="tablist">
+    <button role="tab" aria-selected="true" data-m="pomo">Pomodoro</button>
+    <button role="tab" aria-selected="false" data-m="timer">Timer</button>
+    <button role="tab" aria-selected="false" data-m="stop">Stopwatch</button>
+  </div>
+
+  <section class="card">
+    <div class="ring">
+      <svg viewBox="0 0 200 200"><circle class="tr" cx="100" cy="100" r="90"/><circle class="pr" id="pr" cx="100" cy="100" r="90" stroke-dasharray="565.49" stroke-dashoffset="0"/></svg>
+      <div class="read"><b id="big">25:00</b><span id="lbl">Focus</span></div>
+    </div>
+    <div class="row">
+      <button class="btn main" id="go">Start</button>
+      <button class="btn" id="rst">Reset</button>
+      <button class="btn" id="lap" hidden>Lap</button>
+      <button class="btn" id="skip">Skip</button>
+    </div>
+    <div class="set" id="setPomo">
+      <label>Focus (min)<input type="number" id="fMin" value="25" min="1" max="180"></label>
+      <label>Short break<input type="number" id="sMin" value="5" min="1" max="60"></label>
+      <label>Long break<input type="number" id="lMin" value="15" min="1" max="90"></label>
+    </div>
+    <div class="set" id="setTimer" hidden>
+      <label>Minutes<input type="number" id="tMin" value="10" min="1" max="600"></label>
+    </div>
+    <div class="cnt" id="cnt">Completed focus sessions: 0</div>
+    <ul class="laps" id="laps" hidden></ul>
+  </section>
+
+  <section class="panel">
+    <h2>Background</h2>
+    <div class="sws" id="sws">
+      <button class="sw" data-t="forest" aria-pressed="true">Forest</button>
+      <button class="sw" data-t="night" aria-pressed="false">Night sky</button>
+      <button class="sw" data-t="rain" aria-pressed="false">Rainy window</button>
+      <button class="sw" data-t="sunrise" aria-pressed="false">Sunrise</button>
+    </div>
+    <div class="snd">
+      <label>Sound
+        <select id="snd"><option value="off">Off</option><option value="brown">Soft brown noise</option><option value="rain">Rain</option></select>
+      </label>
+      <input type="range" id="vol" min="0" max="100" value="35" aria-label="Volume">
+    </div>
+  </section>
+</main>
+
+<script>
+(function(){
+  var $=function(i){return document.getElementById(i)};
+  var C=565.49, mode='pomo', phase='focus', done=0, running=false;
+  var total=25*60000, remain=total, endAt=0, elapsed=0, startAt=0, laps=[], tick=null;
+
+  function pad(n){return n<10?'0'+n:''+n}
+  function fmt(ms,h){var s=Math.ceil(ms/1000),m=Math.floor(s/60),hh=Math.floor(m/60);if(h&&hh>0)return hh+':'+pad(m%60)+':'+pad(s%60);return pad(m)+':'+pad(s%60)}
+  function save(k,v){try{localStorage.setItem(k,v)}catch(e){}}
+  function load(k){try{return localStorage.getItem(k)}catch(e){return null}}
+
+  // live clock
+  function clock(){var d=new Date();$('now').textContent=d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit',second:'2-digit'});$('date').textContent=d.toLocaleDateString([], {weekday:'long',day:'numeric',month:'long',year:'numeric'})}
+  clock();setInterval(clock,1000);
+
+  // beep
+  var ac=null;
+  function ctx(){if(!ac){var A=window.AudioContext||window.webkitAudioContext;if(A)ac=new A()}if(ac&&ac.state==='suspended')ac.resume();return ac}
+  function beep(){var a=ctx();if(!a)return;[0,.28,.56].forEach(function(t){var o=a.createOscillator(),g=a.createGain();o.frequency.value=880;o.connect(g);g.connect(a.destination);var n=a.currentTime+t;g.gain.setValueAtTime(.0001,n);g.gain.exponentialRampToValueAtTime(.25,n+.02);g.gain.exponentialRampToValueAtTime(.0001,n+.22);o.start(n);o.stop(n+.25)})}
+
+  function mins(id,d){var v=parseFloat($(id).value);return (v>0?v:d)*60000}
+  function setPhase(p){phase=p;total=remain=mins(p==='focus'?'fMin':p==='short'?'sMin':'lMin',p==='focus'?25:p==='short'?5:15)}
+  function render(){
+    var shown,off=0,label;
+    if(mode==='stop'){var e=running?Date.now()-startAt+elapsed:elapsed;shown=fmt(e,true).replace(/^(\d\d):(\d\d)$/,'$1:$2');var sec=Math.floor(e/1000),mm=pad(Math.floor(sec/60)%60),ss=pad(sec%60),hh=Math.floor(sec/3600);shown=(hh?hh+':':'')+mm+':'+ss;off=C*(1-(e%60000)/60000);label='Elapsed'}
+    else{if(running)remain=Math.max(0,endAt-Date.now());shown=fmt(remain,true);off=C*(1-remain/total);label=mode==='pomo'?(phase==='focus'?'Focus':phase==='short'?'Short break':'Long break'):'Timer'}
+    $('big').textContent=shown;$('lbl').textContent=label;$('pr').style.strokeDashoffset=off;
+    document.title=(running||mode!=='stop'?shown+' · ':'')+'Study Desk';
+    $('go').textContent=running?'Pause':(mode==='stop'?(elapsed?'Resume':'Start'):(remain<total?'Resume':'Start'));
+    $('cnt').textContent='Completed focus sessions: '+done;
+  }
+  function loop(){render();if(mode!=='stop'&&running&&remain<=0)finish()}
+  function finish(){
+    running=false;clearInterval(tick);beep();
+    if(mode==='pomo'){if(phase==='focus'){done++;setPhase(done%4===0?'long':'short')}else setPhase('focus')}
+    else{remain=total}
+    render()
+  }
+  function start(){
+    ctx();
+    if(mode==='stop'){startAt=Date.now()}else{if(remain<=0)remain=total;endAt=Date.now()+remain}
+    running=true;clearInterval(tick);tick=setInterval(loop,250);render()
+  }
+  function pause(){
+    if(mode==='stop'){elapsed+=Date.now()-startAt}else{remain=Math.max(0,endAt-Date.now())}
+    running=false;clearInterval(tick);render()
+  }
+  function reset(){
+    running=false;clearInterval(tick);
+    if(mode==='stop'){elapsed=0;laps=[];showLaps()}
+    else if(mode==='pomo'){setPhase(phase)}
+    else{total=remain=mins('tMin',10)}
+    render()
+  }
+  function showLaps(){var u=$('laps');u.innerHTML='';u.hidden=!laps.length;laps.slice().reverse().forEach(function(l,i){var li=document.createElement('li');li.textContent='Lap '+(laps.length-i)+'  –  '+l;u.appendChild(li)})}
+
+  $('go').onclick=function(){running?pause():start()};
+  $('rst').onclick=reset;
+  $('skip').onclick=function(){if(mode==='pomo'){running=false;clearInterval(tick);if(phase==='focus'){setPhase(((done+1)%4===0)?'long':'short')}else setPhase('focus');render()}};
+  $('lap').onclick=function(){if(mode==='stop'&&(running||elapsed)){var e=running?Date.now()-startAt+elapsed:elapsed,s=Math.floor(e/1000);laps.push(pad(Math.floor(s/60))+':'+pad(s%60));showLaps()}};
+  ['fMin','sMin','lMin','tMin'].forEach(function(id){$(id).onchange=function(){if(!running){if(mode==='pomo')setPhase(phase);else if(mode==='timer')total=remain=mins('tMin',10);render()}}});
+
+  // tabs
+  var tabs=document.querySelectorAll('.tabs button');
+  tabs.forEach(function(b){b.onclick=function(){
+    if(running)pause();
+    mode=b.dataset.m;
+    tabs.forEach(function(x){x.setAttribute('aria-selected',x===b)});
+    $('setPomo').hidden=mode!=='pomo';$('setTimer').hidden=mode!=='timer';
+    $('lap').hidden=mode!=='stop';$('skip').hidden=mode!=='pomo';
+    $('cnt').hidden=mode!=='pomo';$('laps').hidden=mode!=='stop'||!laps.length;
+    if(mode==='pomo')setPhase(phase);else if(mode==='timer')total=remain=mins('tMin',10);
+    render()
+  }});
+  $('lap').hidden=true;
+
+  // backgrounds
+  var sws=document.querySelectorAll('.sw');
+  function theme(t){document.body.className=t;sws.forEach(function(s){s.setAttribute('aria-pressed',s.dataset.t===t)});save('sd-theme',t)}
+  sws.forEach(function(s){s.onclick=function(){theme(s.dataset.t)}});
+  var st=load('sd-theme');if(st&&document.querySelector('.sw[data-t="'+st+'"]'))theme(st);
+
+  // ambient sound
+  var src=null,gain=null;
+  function noiseBuf(a,type){var n=a.sampleRate*3,b=a.createBuffer(1,n,a.sampleRate),d=b.getChannelData(0),last=0;for(var i=0;i<n;i++){var w=Math.random()*2-1;if(type==='brown'){last=(last+.02*w)/1.02;d[i]=last*3.5}else d[i]=w*.6}return b}
+  function sound(){
+    if(src){try{src.stop()}catch(e){}src.disconnect();src=null}
+    var t=$('snd').value;save('sd-snd',t);if(t==='off')return;
+    var a=ctx();if(!a)return;
+    src=a.createBufferSource();src.buffer=noiseBuf(a,t);src.loop=true;
+    gain=a.createGain();gain.gain.value=$('vol').value/100;
+    if(t==='rain'){var hp=a.createBiquadFilter();hp.type='highpass';hp.frequency.value=700;var lp=a.createBiquadFilter();lp.type='lowpass';lp.frequency.value=7000;src.connect(hp);hp.connect(lp);lp.connect(gain)}
+    else src.connect(gain);
+    gain.connect(a.destination);src.start()
+  }
+  $('snd').onchange=sound;
+  $('vol').oninput=function(){if(gain)gain.gain.value=this.value/100;save('sd-vol',this.value)};
+  var sv=load('sd-vol');if(sv)$('vol').value=sv;
+
+  setPhase('focus');render();
+})();
+</script>
+</body>
+</html>
